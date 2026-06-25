@@ -13,18 +13,50 @@ export function ProjectsView() {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [direction, setDirection] = React.useState<"up" | "down">("down");
 
-  function goTo(index: number) {
+  const sectionRef = React.useRef<HTMLElement>(null);
+  const activeIndexRef = React.useRef(activeIndex);
+  const lockedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  const goTo = React.useCallback((index: number) => {
     const clamped = Math.max(0, Math.min(index, caseStudies.length - 1));
-    if (clamped === activeIndex) return;
-    setDirection(clamped > activeIndex ? "down" : "up");
+    if (clamped === activeIndexRef.current) return;
+    setDirection(clamped > activeIndexRef.current ? "down" : "up");
     setActiveIndex(clamped);
-  }
+  }, []);
+
+  // Wheel / trackpad scrolling moves one case study per gesture.
+  React.useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      if (lockedRef.current || Math.abs(event.deltaY) < 8) return;
+
+      const target = activeIndexRef.current + (event.deltaY > 0 ? 1 : -1);
+      if (target < 0 || target > caseStudies.length - 1) return;
+
+      lockedRef.current = true;
+      goTo(target);
+      window.setTimeout(() => {
+        lockedRef.current = false;
+      }, 700);
+    };
+
+    node.addEventListener("wheel", handleWheel, { passive: false });
+    return () => node.removeEventListener("wheel", handleWheel);
+  }, [goTo]);
 
   const study = caseStudies[activeIndex];
   const reversed = activeIndex % 2 === 1;
 
   return (
     <section
+      ref={sectionRef}
       className={cn(
         "flex flex-1 items-center py-8 transition-colors duration-500",
         activeIndex % 2 === 0 ? "bg-muted/40" : "bg-background",
