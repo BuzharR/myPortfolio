@@ -26,7 +26,7 @@ export function ProjectsView() {
   return (
     <section
       className={cn(
-        "flex min-h-[calc(100vh-4rem)] items-center py-16 transition-colors duration-500",
+        "flex flex-1 items-center py-8 transition-colors duration-500",
         activeIndex % 2 === 0 ? "bg-muted/40" : "bg-background",
       )}
     >

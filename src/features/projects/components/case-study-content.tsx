@@ -16,8 +16,8 @@ export function CaseStudyContent({ study, reversed }: CaseStudyContentProps) {
         reversed ? "flex-row-reverse" : "flex-row",
       )}
     >
-      {/* Image */}
-      <div className="flex flex-1 justify-center">
+      {/* Image — hidden on mobile, shown from md up */}
+      <div className="hidden flex-1 justify-center md:flex">
         <div className="relative aspect-square w-full max-w-[360px] overflow-hidden rounded-[2rem] bg-neutral-600 shadow-lg">
           {study.image ? (
             <Image
@@ -39,7 +39,7 @@ export function CaseStudyContent({ study, reversed }: CaseStudyContentProps) {
         <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
           {study.number}. {study.title}
         </h2>
-        <p className="text-3xl font-bold tracking-tight text-brand sm:text-4xl">
+        <p className="font-heading text-3xl font-bold tracking-tight text-brand sm:text-4xl">
           {study.accent}
         </p>
         <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
